@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: playwhe-prediction
+    container_name: playwhe-app
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./predictions:/app/predictions
+      - ./analysis:/app/analysis
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: bash
+
+  web:
+    build:
+      context: .
+      dockerfile: Containerfile
+    image: playwhe-prediction
+    container_name: playwhe-web
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+      - ./models:/app/models
+      - ./predictions:/app/predictions
+      - ./analysis:/app/analysis
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: python -m http.server 8000
+    depends_on:
+      - app
+
+volumes:
+  data:
+  logs:
+  models:
+  predictions:
+  analysis:
